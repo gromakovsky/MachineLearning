@@ -1,11 +1,13 @@
-from typing import List
+from functools import partial
 from math import sqrt
+from operator import itemgetter
 import random
+from typing import List
 
-from dataset import DataSet, Item
+from classifier import Classifier
+from dataset import Feature, DataSet, Item, Label
+from dectree import build_decision_tree, DecisionTree
 from quality import QualityF
-
-from dectree import build_decision_tree
 
 
 class DecisionTreeMeta:
@@ -15,7 +17,7 @@ class DecisionTreeMeta:
         self._used_features = used_features
 
 
-class RandomForest:
+class RandomForest(Classifier):
 
     def __init__(self, train_data: DataSet, quality_function: QualityF, trees_num: int):
         self._trees = []
@@ -27,6 +29,10 @@ class RandomForest:
             tree = build_decision_tree(sub_ds, quality_function)
             meta = DecisionTreeMeta(training_data=sub_ds, used_features=features_to_use)
             self._trees.append((tree, meta))
+
+    def classify(self, features: List[Feature]) -> Label:
+        s = sum(map(partial(DecisionTree.classify, features=features), map(itemgetter(0), self._trees)))
+        return -1 if s < 0 else 1
 
     @staticmethod
     def _features_to_use(features_num):

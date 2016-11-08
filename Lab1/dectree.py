@@ -1,12 +1,13 @@
 import itertools
 from functools import partial
-from typing import Callable
+from typing import Callable, List
 
-from dataset import Label, DataSet, Item, change_dataset
+from classifier import Classifier, test_classifier
+from dataset import Feature, Label, DataSet, Item, change_dataset
 from quality import QualityF
 
 
-class DecisionTree:
+class DecisionTree(Classifier):
 
     def __init__(self, value: Label, avg_features=None, left=None, right=None, split_feature_idx=None):
         self._value = value
@@ -40,7 +41,7 @@ class DecisionTree:
             print('_' * indentation + to_print)
             self._right.print(indentation + len(to_print))
 
-    def classify(self, features):
+    def classify(self, features: List[Feature]) -> Label:
         if self.is_leaf:
             return self._value
         else:
@@ -53,9 +54,9 @@ class DecisionTree:
         if self.is_leaf:
             return
 
-        mistakes = test_decision_tree(root, valid_data)
+        mistakes = test_classifier(root, valid_data)
         self._value = self._majority()
-        new_mistakes = test_decision_tree(root, valid_data)
+        new_mistakes = test_classifier(root, valid_data)
         print(mistakes, new_mistakes)
         if mistakes >= new_mistakes:
             self._become_leaf()
@@ -85,17 +86,6 @@ class DecisionTree:
 
 def build_decision_tree(train_data: DataSet, quality_function: QualityF) -> DecisionTree:
     return _DecisionTreeBuilder(train_data, quality_function).build()
-
-
-def test_decision_tree(tree: DecisionTree, test_data: DataSet):
-    mistakes = 0
-    for item in test_data.items:
-        assert isinstance(item, Item)
-        expected = item.label
-        calculated = tree.classify(item.features)
-        mistakes += expected != calculated
-
-    return mistakes
 
 
 ##########################################################
