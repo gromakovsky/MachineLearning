@@ -34,3 +34,15 @@ def information_gain(data: DataSet, split_func: SplitF) -> float:
         new_entropy += float(part_len) / len(data) * data_entropy(part) if part_len else 0
 
     return entropy - new_entropy
+
+
+def gini_gain(data: DataSet, split_func: SplitF) -> float:
+    sum_squares = 0
+    left_part = change_dataset(data, partial(itertools.filterfalse, split_func))
+    right_part = change_dataset(data, partial(filter, split_func))
+    for part in (left_part, right_part):
+        assert isinstance(part, DataSet)
+        part_len = len(part)
+        sum_squares += (float(part_len) / len(data)) ** 2
+
+    return 1 - sum_squares
