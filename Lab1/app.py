@@ -37,7 +37,7 @@ def main():
     for quality_function_name, quality_function in quality_functions.items():
         print('Using', quality_function_name)
         print('Building random forest…')
-        forest = RandomForest(train_data, quality_function, trees_num=55)
+        forest = RandomForest(train_data, quality_function, trees_num=33)
         run_tests(forest, train_data, valid_data)
         print('Building decision tree…')
         tree = dectree.build_decision_tree(train_data, quality_function)

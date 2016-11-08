@@ -24,9 +24,9 @@ class RandomForest(Classifier):
         for _ in range(trees_num):
             f_num = train_data.features_num
             features_to_use = list(self._random_indices(f_num, self._features_to_use(f_num)))
-            items = list(self._random_items(train_data.items, features_to_use))
+            items = list(self._random_items(train_data.items))
             sub_ds = DataSet(items)
-            tree = build_decision_tree(sub_ds, quality_function)
+            tree = build_decision_tree(sub_ds, quality_function, features_to_use)
             meta = DecisionTreeMeta(training_data=sub_ds, used_features=features_to_use)
             self._trees.append((tree, meta))
 
@@ -39,11 +39,10 @@ class RandomForest(Classifier):
         return int(sqrt(features_num))
 
     @staticmethod
-    def _random_items(items: List[Item], features_to_use):
+    def _random_items(items: List[Item]):
         n = len(items)
         for _ in range(n):
-            i = items[random.randrange(n)]
-            yield Item(features=i.all_features, label=i.label, features_to_use=features_to_use)
+            yield items[random.randrange(n)]
 
     @staticmethod
     def _random_indices(max_val, n):

@@ -1,6 +1,6 @@
 import itertools
 from functools import partial
-from typing import Callable, List
+from typing import Callable, List, Optional
 
 from classifier import Classifier, test_classifier
 from dataset import Feature, Label, DataSet, Item, change_dataset
@@ -84,8 +84,9 @@ class DecisionTree(Classifier):
         return 1 if self._count_if(lambda x: x == 1) > self._count_if(lambda x: x == -1) else -1
 
 
-def build_decision_tree(train_data: DataSet, quality_function: QualityF) -> DecisionTree:
-    return _DecisionTreeBuilder(train_data, quality_function).build()
+def build_decision_tree(train_data: DataSet, quality_function: QualityF,
+                        features_to_use: Optional[List[int]]=None) -> DecisionTree:
+    return _DecisionTreeBuilder(train_data, quality_function, features_to_use).build()
 
 
 ##########################################################
@@ -95,10 +96,11 @@ def build_decision_tree(train_data: DataSet, quality_function: QualityF) -> Deci
 # Note: assuming that all items have the same number of features
 class _DecisionTreeBuilder:
 
-    def __init__(self, train_data: DataSet, quality_function: QualityF):
+    def __init__(self, train_data: DataSet, quality_function: QualityF, features_to_use: Optional[List[int]]):
         self._train_data = train_data
         self._quality_function = quality_function
-        self._features_count = len(train_data.items[0].features)
+        self._features_count = train_data.features_num
+        self._features_to_use = features_to_use
         self._sum_features = [0] * self._features_count
         for item in train_data.items:
             assert isinstance(item, Item)
@@ -114,7 +116,8 @@ class _DecisionTreeBuilder:
 
         max_split_quality = 0
         best_idx = 0
-        for split_feature_idx in range(self._features_count):
+        features_to_use = self._features_to_use if self._features_to_use is not None else range(self._features_count)
+        for split_feature_idx in features_to_use:
             split_f = lambda d: d.features[split_feature_idx] > self._avg_features[split_feature_idx]
             split_quality = self._quality_function(train_data, split_f)
             if split_quality > max_split_quality:

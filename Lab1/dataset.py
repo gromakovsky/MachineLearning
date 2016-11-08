@@ -7,10 +7,9 @@ Feature = int
 
 class Item:
 
-    def __init__(self, features: List[Feature], label: Label, features_to_use:Optional[List[int]]=None):
-        self._all_features = features
+    def __init__(self, features: List[Feature], label: Label):
+        self._features = features
         self._label = label
-        self._features = features if features_to_use is None else [features[i] for i in features_to_use]
 
     @property
     def features(self) -> List[Feature]:
@@ -19,10 +18,6 @@ class Item:
     @property
     def label(self) -> Label:
         return self._label
-
-    @property
-    def all_features(self) -> List[Feature]:
-        return self._all_features
 
 
 class DataSet:
