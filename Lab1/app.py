@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 from dataset import read_data
-from quality import information_gain, gini_gain
 import dectree
+from forest import RandomForest
+from quality import information_gain, gini_gain
 
 TRAIN_DATA_NAME = 'data/arcene_train.data'
 TRAIN_LABELS_NAME = 'data/arcene_train.labels'
@@ -36,13 +37,11 @@ def main():
     for quality_function_name, quality_function in quality_functions.items():
         print('Using', quality_function_name)
         print('Building decision tree…')
-        tree = dectree.build_decision_tree(train_data, quality_function)
+        forest = RandomForest(train_data, quality_function, trees_num=10)
+        # tree = dectree.build_decision_tree(train_data, quality_function)
+        # print('Pruning decision tree…')
+        # tree.prune(valid_data)
         # tree.print()
-        # run_tests(tree, train_data, valid_data)
-        print('Pruning decision tree…')
-        tree.prune(valid_data)
-        tree.print()
-        # run_tests(tree, train_data, valid_data)
 
 if __name__ == '__main__':
     main()

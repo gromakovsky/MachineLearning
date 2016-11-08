@@ -2,19 +2,37 @@ from typing import Callable, Iterable, List, Optional
 
 
 Label = int
+Feature = int
 
 
 class Item:
 
-    def __init__(self, features: List[int], label: Label):
-        self.features = features
-        self.label = label
+    def __init__(self, features: List[Feature], label: Label, features_to_use:Optional[List[int]]=None):
+        self._all_features = features
+        self._label = label
+        self._features = features if features_to_use is None else [features[i] for i in features_to_use]
+
+    @property
+    def features(self) -> List[Feature]:
+        return self._features
+
+    @property
+    def label(self) -> Label:
+        return self._label
+
+    @property
+    def all_features(self) -> List[Feature]:
+        return self._all_features
 
 
 class DataSet:
 
     def __init__(self, items: List[Item]):
         self.items = items
+
+    @property
+    def features_num(self):
+        return len(self.items[0].features) if self.items else 0
 
     # returns 1 if all items have label=1, -1 if all items have label=-1, None otherwise
     def all_the_same(self) -> Optional[Label]:

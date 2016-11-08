@@ -8,7 +8,7 @@ from quality import QualityF
 
 class DecisionTree:
 
-    def __init__(self, value, avg_features=None, left=None, right=None, split_feature_idx=None):
+    def __init__(self, value: Label, avg_features=None, left=None, right=None, split_feature_idx=None):
         self._value = value
         self._avg_features = avg_features
         self._left = left
@@ -127,7 +127,6 @@ class _DecisionTreeBuilder:
         for split_feature_idx in range(self._features_count):
             split_f = lambda d: d.features[split_feature_idx] > self._avg_features[split_feature_idx]
             split_quality = self._quality_function(train_data, split_f)
-            assert split_quality >= 0
             if split_quality > max_split_quality:
                 max_split_quality = split_quality
                 best_idx = split_feature_idx
