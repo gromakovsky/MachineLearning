@@ -1,14 +1,44 @@
+from typing import Callable, Iterable, List, Optional
+
+
+Label = int
+
+
 class Item:
 
-    def __init__(self, features: [int], label: int):
+    def __init__(self, features: List[int], label: Label):
         self.features = features
         self.label = label
 
 
 class DataSet:
 
-    def __init__(self, items: [Item]):
+    def __init__(self, items: List[Item]):
         self.items = items
+
+    # returns 1 if all items have label=1, -1 if all items have label=-1, None otherwise
+    def all_the_same(self) -> Optional[Label]:
+        all_positive = True
+        all_negative = True
+        for item in self.items:
+            assert isinstance(item, Item)
+            if item.label == -1:
+                all_positive = False
+            else:
+                all_negative = False
+
+        if all_positive:
+            return 1
+
+        if all_negative:
+            return -1
+
+    def __len__(self):
+        return len(self.items)
+
+
+def change_dataset(data: DataSet, f: Callable[[List[Item]], Iterable[Item]]):
+    return DataSet(list(f(data.items)))
 
 
 def read_data(data_file_name, labels_file_name):
