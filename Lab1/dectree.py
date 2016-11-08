@@ -7,6 +7,7 @@ from quality import QualityF
 
 
 class DecisionTree:
+
     def __init__(self, value, avg_features=None, left=None, right=None, split_feature_idx=None):
         self._value = value
         self._avg_features = avg_features
@@ -45,7 +46,25 @@ class DecisionTree:
         else:
             return self._right.classify(features) if self._check(features) else self._left.classify(features)
 
-    def prune(self):
+    def prune(self, valid_data: DataSet):
+        self._prune(valid_data=valid_data, root=self)
+
+    def _prune(self, valid_data: DataSet, root):
+        if self.is_leaf:
+            return
+
+        mistakes = test_decision_tree(root, valid_data)
+        self._value = self._majority()
+        new_mistakes = test_decision_tree(root, valid_data)
+        print(mistakes, new_mistakes)
+        if mistakes >= new_mistakes:
+            self._become_leaf()
+        else:
+            self._value = None
+            self._left._prune(valid_data, root)
+            self._right._prune(valid_data, root)
+
+    def _become_leaf(self):
         self._avg_features = None
         self._left = None
         self._right = None
@@ -54,9 +73,37 @@ class DecisionTree:
     def _check(self, features) -> bool:
         return features[self._split_feature_idx] > self._avg_features[self._split_feature_idx]
 
+    def _count_if(self, predicate: Callable[[Label], bool]) -> int:
+        if self.is_leaf:
+            return int(predicate(self._value))
+        else:
+            return self._left._count_if(predicate) + self._right._count_if(predicate)
+
+    def _majority(self) -> Label:
+        return 1 if self._count_if(lambda x: x == 1) > self._count_if(lambda x: x == -1) else -1
+
+
+def build_decision_tree(train_data: DataSet, quality_function: QualityF) -> DecisionTree:
+    return _DecisionTreeBuilder(train_data, quality_function).build()
+
+
+def test_decision_tree(tree: DecisionTree, test_data: DataSet):
+    mistakes = 0
+    for item in test_data.items:
+        assert isinstance(item, Item)
+        expected = item.label
+        calculated = tree.classify(item.features)
+        mistakes += expected != calculated
+
+    return mistakes
+
+
+##########################################################
+# Implementation
+##########################################################
 
 # Note: assuming that all items have the same number of features
-class DecisionTreeBuilder:
+class _DecisionTreeBuilder:
 
     def __init__(self, train_data: DataSet, quality_function: QualityF):
         self._train_data = train_data
@@ -92,60 +139,5 @@ class DecisionTreeBuilder:
         right_tree = self._build_decision_tree_(right_ds)
         return DecisionTree(None, self._avg_features, left_tree, right_tree, best_idx)
 
-    def build(self):
+    def build(self) -> DecisionTree:
         return self._build_decision_tree_(self._train_data)
-
-
-def count_if(tree: DecisionTree, predicate: Callable[[Label], bool]):
-    if tree.value is not None:
-        return predicate(tree.value)
-    else:
-        return count_if(tree.left, predicate) + count_if(tree.right, predicate)
-
-
-def majority(tree) -> int:
-    return 1 if count_if(tree, lambda x: x == 1) > count_if(tree, lambda x: x == -1) else -1
-
-
-class DecisionTreePruner:
-    def __init__(self, tree: DecisionTree, valid_data):
-        self.tree = tree
-        self.valid_data = valid_data
-
-    def _prune_(self, child):
-        mistakes = test_decision_tree(self.tree, self.valid_data)
-        child.value = majority(child)
-        new_mistakes = test_decision_tree(self.tree, self.valid_data)
-        print(mistakes, new_mistakes)
-        if mistakes >= new_mistakes:
-            child.prune()
-        else:
-            child.value = None
-            self._prune_(child.left)
-            self._prune_(child.right)
-
-    def prune(self):
-        self._prune_(self.tree)
-
-
-def prune_decision_tree(tree, valid_data):
-    DecisionTreePruner(tree, valid_data).prune()
-
-
-def test_decision_tree(tree: DecisionTree, test_data: DataSet):
-    mistakes = 0
-    for item in test_data:
-        assert isinstance(item, Item)
-        expected = item.label
-        calculated = tree.classify(item.features)
-        mistakes += (expected != calculated)
-
-    return mistakes
-
-
-def test_decision_tree_and_print(tree, test_data):
-    mistakes = test_decision_tree(tree, test_data)
-    print('Tested decision tree on data of size {}, it made {} mistakes ({}%)'.format(len(test_data),
-                                                                                      mistakes,
-                                                                                      100. * mistakes / len(test_data))
-)
