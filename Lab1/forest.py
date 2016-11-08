@@ -39,18 +39,24 @@ class RandomForest(Classifier):
     def classify(self, features: List[Feature]) -> Label:
         return self._classify(map(itemgetter(0), self._trees), features)
 
-    def oob_error(self):
-        items_num = len(self._train_data)
-        total_classifications = 0
-        total_errors = 0
-        for i in range(items_num):
-            item = self._train_data.items[i]
-            trees = map(itemgetter(0), filter(lambda pair: i in pair[1].item_indices, self._trees))
-            total_classifications += 1
-            total_errors += int(item.label != self._classify(trees, item.features))
+    def oob_error(self) -> List[float]:
+        res = []
+        for tree, tree_meta in self._trees:
+            items_num = len(self._train_data)
+            total_classifications = 0
+            total_errors = 0
+            for i in range(items_num):
+                if i not in tree_meta.item_indices:
+                    continue
 
-        print(total_classifications, total_errors)
-        return float(total_errors) / total_classifications
+                item = self._train_data.items[i]
+                total_classifications += 1
+                total_errors += int(item.label != tree.classify(item.features))
+
+            print(total_classifications, total_errors)
+            res.append(float(total_errors) / total_classifications)
+
+        return res
 
     def _classify(self, trees: Iterable[DecisionTree], features: List[Feature]):
         s = sum(map(partial(DecisionTree.classify, features=features), trees))
