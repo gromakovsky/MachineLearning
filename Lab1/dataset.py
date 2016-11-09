@@ -1,3 +1,4 @@
+import random
 from typing import Callable, Iterable, List, Optional
 
 
@@ -18,6 +19,9 @@ class Item:
     @property
     def label(self) -> Label:
         return self._label
+
+    def copy(self):
+        return Item(self._features.copy(), self._label)
 
 
 class DataSet:
@@ -52,6 +56,16 @@ class DataSet:
 
 def change_dataset(data: DataSet, f: Callable[[List[Item]], Iterable[Item]]):
     return DataSet(list(f(data.items)))
+
+
+def shuffle_feature(data: DataSet, feature_idx: int) -> DataSet:
+    features_values = [i.features[feature_idx] for i in data.items]
+    res = DataSet([i.copy() for i in data.items])
+    random.shuffle(features_values)
+    for i, v in enumerate(features_values):
+        res.items[i].features[feature_idx] = v
+
+    return res
 
 
 def read_data(data_file_name, labels_file_name):
