@@ -4,10 +4,10 @@ from operator import attrgetter
 import random
 from typing import List, Iterable
 
-from classifier import Classifier
-from dataset import Feature, DataSet, Item, Label
-from dectree import build_decision_tree, DecisionTree
-from quality import QualityF
+from ml.classifier import Classifier
+from ml.dataset import Feature, DataSet, Item, Label
+from ml.dectree import build_decision_tree, DecisionTree
+from ml.quality import QualityF
 
 
 class DecisionTreeMeta:

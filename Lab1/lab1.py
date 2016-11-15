@@ -1,10 +1,8 @@
-#!/usr/bin/env python
-
-from classifier import Classifier, test_classifier
-from dataset import DataSet, read_data
-# import dectree
-from forest import RandomForest
-from quality import information_gain, gini_gain
+from ml.classifier import Classifier, test_classifier
+from ml.dataset import DataSet, read_data
+# import ml.dectree
+from ml.forest import RandomForest
+from ml.quality import information_gain, gini_gain
 
 TRAIN_DATA_NAME = 'data/arcene_train.data'
 TRAIN_LABELS_NAME = 'data/arcene_train.labels'

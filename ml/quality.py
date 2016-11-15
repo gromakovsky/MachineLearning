@@ -3,7 +3,7 @@ import itertools
 from functools import partial
 from typing import Callable
 
-from dataset import Item, DataSet, change_dataset
+from ml.dataset import Item, DataSet, change_dataset
 
 
 SplitF = Callable[[Item], bool]

@@ -2,9 +2,9 @@ import itertools
 from functools import partial
 from typing import Callable, List, Optional
 
-from classifier import Classifier, test_classifier
-from dataset import Feature, Label, DataSet, Item, change_dataset
-from quality import QualityF
+from ml.classifier import Classifier, test_classifier
+from ml.dataset import Feature, Label, DataSet, Item, change_dataset
+from ml.quality import QualityF
 
 
 class DecisionTree(Classifier):

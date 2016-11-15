@@ -1,7 +1,7 @@
 import abc
 from typing import List
 
-from dataset import DataSet, Feature, Item, Label
+from ml.dataset import DataSet, Feature, Item, Label
 
 
 class Classifier:
