@@ -55,15 +55,13 @@ class RandomForest(Classifier):
 
     def oob_error(self, train_data: DataSet) -> List[float]:
         res = []
-        items_num = len(train_data)
         for extended_tree in self._trees:
             total_classifications = 0
             total_errors = 0
-            for i in range(items_num):
+            for i, item in enumerate(train_data.items):
                 if i in extended_tree.meta.item_indices:
                     continue
 
-                item = train_data.items[i]
                 total_classifications += 1
                 total_errors += int(item.label != extended_tree.tree.classify(item.features))
 
