@@ -3,6 +3,7 @@ from ml.dataset import DataSet, read_data
 # import ml.dectree
 from ml.forest import RandomForest
 from ml.quality import information_gain, gini_gain
+from ml.selection import select_features
 
 TRAIN_DATA_NAME = 'data/arcene_train.data'
 TRAIN_LABELS_NAME = 'data/arcene_train.labels'
@@ -26,7 +27,7 @@ def run_tests(classifier, train_data, valid_data):
 
 def main():
     train_data = read_data(TRAIN_DATA_NAME, TRAIN_LABELS_NAME)
-    valid_data = read_data(VALID_DATA_NAME, VALID_LABELS_NAME)
+    validation_data = read_data(VALID_DATA_NAME, VALID_LABELS_NAME)
 
     quality_functions = {
         'Information gain': information_gain,
@@ -36,9 +37,11 @@ def main():
         print('Using', quality_function_name)
         print('Building random forest…')
         forest = RandomForest(train_data, quality_function, trees_num=15)
-        run_tests(forest, train_data, valid_data)
-        print('OOB error: {}'.format(forest.oob_error(train_data)))
-        # print('Building decision tree…')
+        print('Selecting features…')
+        features_importance = select_features(forest, train_data, validation_data)
+        print('Importance: {}'.format(features_importance))
+        # run_tests(forest, train_data, valid_data)
+         # print('Building decision tree…')
         # tree = dectree.build_decision_tree(train_data, quality_function)
         # run_tests(tree, train_data, valid_data)
         # print('Pruning decision tree…')

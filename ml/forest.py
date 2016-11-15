@@ -65,7 +65,7 @@ class RandomForest(Classifier):
                 total_classifications += 1
                 total_errors += int(item.label != extended_tree.tree.classify(item.features))
 
-            print(total_classifications, total_errors)
+            # print(total_classifications, total_errors)
             res.append(float(total_errors) / total_classifications)
 
         return res
