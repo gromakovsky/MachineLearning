@@ -38,7 +38,7 @@ def main():
         print('Building random forest…')
         forest = RandomForest(train_data, quality_function, trees_num=15)
         print('Selecting features…')
-        features_importance = select_features(forest, train_data, validation_data)
+        features_importance = select_features(forest, train_data)
         print('Importance: {}'.format(features_importance))
         # run_tests(forest, train_data, valid_data)
          # print('Building decision tree…')
