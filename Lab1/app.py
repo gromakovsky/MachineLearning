@@ -2,7 +2,7 @@
 
 from classifier import Classifier, test_classifier
 from dataset import DataSet, read_data
-import dectree
+# import dectree
 from forest import RandomForest
 from quality import information_gain, gini_gain
 
@@ -39,8 +39,8 @@ def main():
         print('Building random forest…')
         forest = RandomForest(train_data, quality_function, trees_num=15)
         run_tests(forest, train_data, valid_data)
-        print('OOB error: {}'.format(forest.oob_error()))
-        print('Building decision tree…')
+        print('OOB error: {}'.format(forest.oob_error(train_data)))
+        # print('Building decision tree…')
         # tree = dectree.build_decision_tree(train_data, quality_function)
         # run_tests(tree, train_data, valid_data)
         # print('Pruning decision tree…')
