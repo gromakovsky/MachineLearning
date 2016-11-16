@@ -1,8 +1,8 @@
 from typing import List, Optional
 from sklearn import svm
 
-from ml.classifier import Classifier
-from ml.dataset import DataSet, Feature, Label, Item
+from ml.classifier import Classifier, test_classifier
+from ml.dataset import DataSet, Feature, Label
 
 
 class SvmClassifier(Classifier):
@@ -18,3 +18,8 @@ class SvmClassifier(Classifier):
 
     def _project_features(self, features: List[Feature]) -> List[Feature]:
         return [features[i] for i in self._features_to_use]
+
+
+def test_svm_classifier(train_data: DataSet, features_to_use: List[int], validation_data: DataSet) -> int:
+    classifier = SvmClassifier(train_data, features_to_use)
+    return test_classifier(classifier, validation_data)
