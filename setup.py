@@ -4,7 +4,9 @@ setup(
     name='ml-advanced',
     description='Advanced Machine Learning',
     author='gromak',
-    install_requires=[],
+    install_requires=[
+        'scikit-learn',
+    ],
     packages=find_packages(),
     entry_points={
         'console_scripts': [
