@@ -2,6 +2,7 @@ import abc
 from operator import itemgetter
 from typing import List
 from scipy import stats
+from sklearn.metrics import mutual_info_score
 
 from ml.dataset import DataSet, shuffle_feature
 from ml.forest import RandomForest
@@ -48,6 +49,15 @@ class SpearmanImportanceCalculator(ImportanceCalculator):
         features_num = train_data.features_num
         features_transposed = [[item.features[i] for item in train_data.items] for i in range(features_num)]
         return [stats.spearmanr(features_transposed[i], labels)[0] for i in range(features_num)]
+
+
+class MutualInformationImportanceCalculator(ImportanceCalculator):
+
+    def __call__(self, train_data: DataSet) -> List[float]:
+        labels = [item.label for item in train_data.items]
+        features_num = train_data.features_num
+        features_transposed = [[item.features[i] for item in train_data.items] for i in range(features_num)]
+        return [mutual_info_score(features_transposed[i], labels) for i in range(features_num)]
 
 
 def order_features(calculator: RFImportanceCalculator, train_data: DataSet) -> List[int]:

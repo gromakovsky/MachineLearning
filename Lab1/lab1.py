@@ -3,7 +3,7 @@ from ml.dataset import DataSet, read_data
 from ml.forest import RandomForest
 from ml.quality import information_gain, gini_gain
 from ml.selection import order_features, estimate_feature_selection, RFImportanceCalculator,\
-    PearsonImportanceCalculator, SpearmanImportanceCalculator
+    PearsonImportanceCalculator, SpearmanImportanceCalculator, MutualInformationImportanceCalculator
 
 TRAIN_DATA_NAME = 'data/arcene_train.data'
 TRAIN_LABELS_NAME = 'data/arcene_train.labels'
@@ -42,6 +42,7 @@ def main():
             'random forest': RFImportanceCalculator(forest),
             'Pearson': PearsonImportanceCalculator(),
             'Spearman': SpearmanImportanceCalculator(),
+            'mutual information': MutualInformationImportanceCalculator(),
         }
         for importance_calculator_name, importance_calculator in importance_calculators.items():
             print('Using', importance_calculator_name)
