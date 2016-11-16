@@ -32,6 +32,10 @@ class DecisionTree(Classifier):
     def right(self):
         return self._right
 
+    @property
+    def height(self):
+        return 1 if self.is_leaf else 1 + max(self._left.height, self._right.height)
+
     def print(self, indentation=0):
         if self.is_leaf:
             print('_' * indentation + str(self._value))
