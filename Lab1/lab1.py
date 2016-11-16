@@ -1,3 +1,5 @@
+import matplotlib.pyplot as plt
+
 from ml.classifier import Classifier, test_classifier
 from ml.dataset import DataSet, read_data
 from ml.forest import RandomForest
@@ -49,7 +51,10 @@ def main():
             print('Ordering features…')
             ordered_features = order_features(importance_calculator, train_data)
             print('Estimating feature selection…')
-            estimate_feature_selection(ordered_features, train_data, validation_data)
+            plt.plot(*zip(*estimate_feature_selection(ordered_features, train_data, validation_data)))
+
+        plt.legend(importance_calculators.keys())
+        plt.show()
 
 if __name__ == '__main__':
     main()

@@ -77,4 +77,5 @@ def estimate_feature_selection(ordered_features: List[int],
         features_to_use = ordered_features[:n]
         errors_num = test_svm_classifier(train_data, features_to_use, validation_data)
         accuracy = (validation_items_num - errors_num) / validation_items_num
+        yield n, accuracy
         print('Number of features: {}, accuracy: {}'.format(n, accuracy))

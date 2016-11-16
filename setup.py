@@ -8,6 +8,7 @@ setup(
         'scikit-learn',
         'numpy',
         'scipy',
+        'matplotlib',
     ],
     packages=find_packages(),
     entry_points={
