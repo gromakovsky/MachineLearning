@@ -1,7 +1,7 @@
 import abc
 from operator import itemgetter
 from typing import List
-import scipy
+from scipy import stats
 
 from ml.dataset import DataSet, shuffle_feature
 from ml.forest import RandomForest
@@ -38,7 +38,16 @@ class PearsonImportanceCalculator(ImportanceCalculator):
         labels = [item.label for item in train_data.items]
         features_num = train_data.features_num
         features_transposed = [[item.features[i] for item in train_data.items] for i in range(features_num)]
-        return [scipy.stats.pearsonr(features_transposed[i], labels)[0] for i in range(features_num)]
+        return [stats.pearsonr(features_transposed[i], labels)[0] for i in range(features_num)]
+
+
+class SpearmanImportanceCalculator(ImportanceCalculator):
+
+    def __call__(self, train_data: DataSet) -> List[float]:
+        labels = [item.label for item in train_data.items]
+        features_num = train_data.features_num
+        features_transposed = [[item.features[i] for item in train_data.items] for i in range(features_num)]
+        return [stats.spearmanr(features_transposed[i], labels)[0] for i in range(features_num)]
 
 
 def order_features(calculator: RFImportanceCalculator, train_data: DataSet) -> List[int]:
