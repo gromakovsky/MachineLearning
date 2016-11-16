@@ -11,12 +11,12 @@ class Classifier:
         raise NotImplemented
 
 
-def test_classifier(tree: Classifier, test_data: DataSet):
+def test_classifier(classifier: Classifier, test_data: DataSet):
     mistakes = 0
     for item in test_data.items:
         assert isinstance(item, Item)
         expected = item.label
-        calculated = tree.classify(item.features)
+        calculated = classifier.classify(item.features)
         mistakes += expected != calculated
 
     return mistakes
