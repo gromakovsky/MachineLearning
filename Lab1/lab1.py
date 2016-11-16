@@ -2,8 +2,7 @@ from ml.classifier import Classifier, test_classifier
 from ml.dataset import DataSet, read_data
 from ml.forest import RandomForest
 from ml.quality import information_gain, gini_gain
-from ml.selection import order_features, estimate_feature_selection
-from ml.svm import SvmClassifier
+from ml.selection import order_features, estimate_feature_selection, RFImportanceCalculator, PearsonImportanceCalculator
 
 TRAIN_DATA_NAME = 'data/arcene_train.data'
 TRAIN_LABELS_NAME = 'data/arcene_train.labels'
@@ -33,14 +32,21 @@ def main():
         'Information gain': information_gain,
         'Gini gain': gini_gain,
     }
+
     for quality_function_name, quality_function in quality_functions.items():
         print('Using', quality_function_name)
         print('Building random forest…')
         forest = RandomForest(train_data, quality_function, trees_num=50)
-        print('Ordering features…')
-        ordered_features = order_features(forest, train_data)
-        print('Estimating feature selection…')
-        estimate_feature_selection(ordered_features, train_data, validation_data)
+        importance_calculators = {
+            'random forest': RFImportanceCalculator(forest),
+            'Pearson': PearsonImportanceCalculator(),
+        }
+        for importance_calculator_name, importance_calculator in importance_calculators.items():
+            print('Using', importance_calculator_name)
+            print('Ordering features…')
+            ordered_features = order_features(importance_calculator, train_data)
+            print('Estimating feature selection…')
+            estimate_feature_selection(ordered_features, train_data, validation_data)
 
 if __name__ == '__main__':
     main()

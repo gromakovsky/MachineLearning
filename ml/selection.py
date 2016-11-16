@@ -1,25 +1,48 @@
+import abc
 from operator import itemgetter
 from typing import List
+import scipy
 
 from ml.dataset import DataSet, shuffle_feature
 from ml.forest import RandomForest
 from ml.svm import test_svm_classifier
 
 
-def calc_feature_importance(forest: RandomForest, train_data: DataSet) -> List[float]:
-    main_error = forest.oob_error(train_data)
-    print('OOB error: {}'.format(main_error))
-    res = []
-    for i in range(train_data.features_num):
-        shuffled = shuffle_feature(train_data, i)
-        shuffled_error = forest.oob_error(shuffled)
-        res.append(sum(me - se for me, se in zip(main_error, shuffled_error)))
+class ImportanceCalculator:
 
-    return res
+    @abc.abstractmethod
+    def __call__(self, train_data: DataSet) -> List[float]:
+        raise NotImplemented
 
 
-def order_features(forest: RandomForest, train_data: DataSet) -> List[int]:
-    importance = calc_feature_importance(forest, train_data)
+class RFImportanceCalculator(ImportanceCalculator):
+
+    def __init__(self, forest: RandomForest):
+        self._forest = forest
+
+    def __call__(self, train_data: DataSet) -> List[float]:
+        main_error = self._forest.oob_error(train_data)
+        print('OOB error: {}'.format(main_error))
+        res = []
+        for i in range(train_data.features_num):
+            shuffled = shuffle_feature(train_data, i)
+            shuffled_error = self._forest.oob_error(shuffled)
+            res.append(sum(me - se for me, se in zip(main_error, shuffled_error)))
+
+        return res
+
+
+class PearsonImportanceCalculator(ImportanceCalculator):
+
+    def __call__(self, train_data: DataSet) -> List[float]:
+        labels = [item.label for item in train_data.items]
+        features_num = train_data.features_num
+        features_transposed = [[item.features[i] for item in train_data.items] for i in range(features_num)]
+        return [scipy.stats.pearsonr(features_transposed[i], labels)[0] for i in range(features_num)]
+
+
+def order_features(calculator: RFImportanceCalculator, train_data: DataSet) -> List[int]:
+    importance = calculator(train_data)
     # print('Importance: {}'.format(importance))
     indices = list(range(train_data.features_num))
     return list(map(itemgetter(0), sorted(zip(indices, importance), key=itemgetter(1), reverse=True)))
