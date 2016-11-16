@@ -79,7 +79,8 @@ class RandomForest(Classifier):
 
     @staticmethod
     def _features_to_use_num(features_num):
-        return int(sqrt(features_num))
+        return int(features_num / 5)
+        # return int(sqrt(features_num))
 
     @staticmethod
     def _random_items(items: List[Item]):

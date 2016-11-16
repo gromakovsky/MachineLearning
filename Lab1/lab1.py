@@ -36,7 +36,7 @@ def main():
     for quality_function_name, quality_function in quality_functions.items():
         print('Using', quality_function_name)
         print('Building random forest…')
-        forest = RandomForest(train_data, quality_function, trees_num=15)
+        forest = RandomForest(train_data, quality_function, trees_num=50)
         print('Selecting features…')
         features_importance = select_features(forest, train_data)
         print('Importance: {}'.format(features_importance))
