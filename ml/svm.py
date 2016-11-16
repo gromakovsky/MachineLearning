@@ -11,7 +11,8 @@ class SvmClassifier(Classifier):
         self._data = data
         self._features_to_use = features_to_use if features_to_use is not None else list(range(data.features_num))
         self._classifier = svm.SVC(kernel='linear')
-        self._classifier.fit(*zip(*(self._project_features(item.features), item.label for item in data.items)))
+        plain_items = ((self._project_features(item.features), item.label) for item in data.items)
+        self._classifier.fit(*zip(*plain_items))
 
     def classify(self, features: List[Feature]) -> Label:
         return self._classifier.predict(self._project_features(features))
