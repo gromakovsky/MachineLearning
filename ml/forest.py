@@ -50,6 +50,8 @@ class RandomForest(Classifier):
             meta = DecisionTreeMeta(training_data=sub_ds, item_indices=item_indices, used_features=features_to_use)
             self._trees.append(ExtendedDecisionTree(tree, meta))
 
+        print('Heights:', [t.tree.height for t in self._trees])
+
     def classify(self, features: List[Feature]) -> Label:
         return self._classify(map(attrgetter('tree'), self._trees), features)
 
