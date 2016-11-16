@@ -6,6 +6,8 @@ setup(
     author='gromak',
     install_requires=[
         'scikit-learn',
+        'numpy',
+        'scipy',
     ],
     packages=find_packages(),
     entry_points={
