@@ -4,7 +4,7 @@ from ml.dataset import DataSet, shuffle_feature
 from ml.forest import RandomForest
 
 
-def select_features(forest: RandomForest, train_data: DataSet) -> List[float]:
+def calc_feature_importance(forest: RandomForest, train_data: DataSet) -> List[float]:
     main_error = forest.oob_error(train_data)
     print('OOB error: {}'.format(main_error))
     res = []

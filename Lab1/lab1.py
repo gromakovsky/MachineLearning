@@ -3,7 +3,7 @@ from ml.dataset import DataSet, read_data
 # import ml.dectree
 from ml.forest import RandomForest
 from ml.quality import information_gain, gini_gain
-from ml.selection import select_features
+from ml.selection import calc_feature_importance
 
 TRAIN_DATA_NAME = 'data/arcene_train.data'
 TRAIN_LABELS_NAME = 'data/arcene_train.labels'
@@ -38,7 +38,7 @@ def main():
         print('Building random forest…')
         forest = RandomForest(train_data, quality_function, trees_num=50)
         print('Selecting features…')
-        features_importance = select_features(forest, train_data)
+        features_importance = calc_feature_importance(forest, train_data)
         print('Importance: {}'.format(features_importance))
         # run_tests(forest, train_data, valid_data)
          # print('Building decision tree…')
