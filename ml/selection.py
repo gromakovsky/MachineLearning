@@ -1,3 +1,4 @@
+from operator import itemgetter
 from typing import List
 
 from ml.dataset import DataSet, shuffle_feature
@@ -14,3 +15,9 @@ def calc_feature_importance(forest: RandomForest, train_data: DataSet) -> List[f
         res.append(sum(me - se for me, se in zip(main_error, shuffled_error)))
 
     return res
+
+
+def order_features(forest: RandomForest, train_data: DataSet) -> List[int]:
+    importance = calc_feature_importance(forest, train_data)
+    indices = list(range(train_data.features_num))
+    return list(map(itemgetter(0), sorted(zip(indices, importance), key=itemgetter(1), reverse=True)))
