@@ -1,9 +1,9 @@
 from ml.classifier import Classifier, test_classifier
 from ml.dataset import DataSet, read_data
-# import ml.dectree
 from ml.forest import RandomForest
 from ml.quality import information_gain, gini_gain
-from ml.selection import calc_feature_importance
+from ml.selection import order_features, estimate_feature_selection
+from ml.svm import SvmClassifier
 
 TRAIN_DATA_NAME = 'data/arcene_train.data'
 TRAIN_LABELS_NAME = 'data/arcene_train.labels'
@@ -37,16 +37,10 @@ def main():
         print('Using', quality_function_name)
         print('Building random forest…')
         forest = RandomForest(train_data, quality_function, trees_num=50)
-        print('Selecting features…')
-        features_importance = calc_feature_importance(forest, train_data)
-        print('Importance: {}'.format(features_importance))
-        # run_tests(forest, train_data, valid_data)
-         # print('Building decision tree…')
-        # tree = dectree.build_decision_tree(train_data, quality_function)
-        # run_tests(tree, train_data, valid_data)
-        # print('Pruning decision tree…')
-        # tree.prune(valid_data)
-        # tree.print()
+        print('Ordering features…')
+        ordered_features = order_features(forest, train_data)
+        print('Estimating feature selection…')
+        estimate_feature_selection(ordered_features, train_data, validation_data)
 
 if __name__ == '__main__':
     main()

@@ -15,7 +15,7 @@ class SvmClassifier(Classifier):
         self._classifier.fit(*zip(*plain_items))
 
     def classify(self, features: List[Feature]) -> Label:
-        return self._classifier.predict(self._project_features(features))
+        return self._classifier.predict([self._project_features(features)])[0]
 
     def _project_features(self, features: List[Feature]) -> List[Feature]:
         return [features[i] for i in self._features_to_use]
