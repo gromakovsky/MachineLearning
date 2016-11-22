@@ -14,6 +14,7 @@ setup(
     entry_points={
         'console_scripts': [
             'lab1 = Lab1.lab1:main',
+            'lab2 = Lab2.lab2:main',
         ]
     },
 )
