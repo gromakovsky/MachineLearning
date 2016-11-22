@@ -36,14 +36,12 @@ def broken_stick(eigens: List[Tuple[float, np.ndarray]]) -> BrokenStickRes:
     n = len(eigens)
     normalized = [i / s for i in map(fst, eigens)]
     steps = []
-    res = 0
+    res = None
     for i in range(len(normalized)):
         l = sum(1 / (j + 1) for j in range(i, n)) / n
         steps.append(l)
-        if normalized[i] < l:
-            break
-
-        res += 1
+        if normalized[i] < l and res is None:
+            res = i
 
     return BrokenStickRes(k=res, normalized=normalized, steps=steps)
 

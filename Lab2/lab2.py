@@ -1,4 +1,5 @@
 import numpy as np
+import matplotlib.pyplot as plt
 
 from ml.pca import pca_eigens, broken_stick, transformation_matrix, BrokenStickRes
 
@@ -10,7 +11,14 @@ FILES = [
 
 
 def visualize_broken_stick(broken_stick_res: BrokenStickRes):
-    pass
+    k = broken_stick_res.k
+    to_show = k + 2
+    eigen_values = broken_stick_res.normalized[:to_show]
+    eigen_bar = plt.bar(np.arange(to_show), eigen_values, width=0.5)
+    steps = broken_stick_res.steps[:to_show]
+    steps_bar = plt.bar(np.arange(to_show), steps, width=0.3, color='red')
+    plt.legend((eigen_bar, steps_bar), ('Normalized eigen values', 'Broken stick steps'))
+    plt.show()
 
 
 def main():
