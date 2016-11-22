@@ -1,13 +1,16 @@
 import numpy as np
 
-from ml.pca import pca_eigens, broken_stick, transformation_matrix
-
+from ml.pca import pca_eigens, broken_stick, transformation_matrix, BrokenStickRes
 
 FILES = [
     'data/newBasis1',
     'data/newBasis2',
     'data/newBasis3',
 ]
+
+
+def visualize_broken_stick(broken_stick_res: BrokenStickRes):
+    pass
 
 
 def main():
@@ -18,9 +21,11 @@ def main():
 
         arr = np.array(data)
         eigens = pca_eigens(arr)
-        k = broken_stick(eigens)
-        print('Number of principal components:', k)
-        m = transformation_matrix([e[1] for e in eigens], k)
+        broken_stick_res = broken_stick(eigens)
+        assert isinstance(broken_stick_res, BrokenStickRes)
+        print('Number of principal components:', broken_stick_res.k)
+        visualize_broken_stick(broken_stick_res)
+        m = transformation_matrix([e[1] for e in eigens], broken_stick_res.k)
         transformed = (m @ arr.T).T
         with open(file + '-transformed', mode='w') as out:
             for item in transformed:

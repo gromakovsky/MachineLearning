@@ -1,3 +1,4 @@
+from collections import namedtuple
 from operator import itemgetter
 from typing import List, Tuple
 import numpy as np
@@ -27,19 +28,24 @@ def pca_eigens(arr: np.ndarray) -> List[Tuple[float, np.ndarray]]:
     return eigen_pairs
 
 
-def broken_stick(eigens: List[Tuple[float, np.ndarray]]) -> int:
+BrokenStickRes = namedtuple('BrokenStickRes', ('k', 'normalized', 'steps'))
+
+
+def broken_stick(eigens: List[Tuple[float, np.ndarray]]) -> BrokenStickRes:
     s = sum(map(fst, eigens))
     n = len(eigens)
     normalized = [i / s for i in map(fst, eigens)]
+    steps = []
     res = 0
     for i in range(len(normalized)):
         l = sum(1 / (j + 1) for j in range(i, n)) / n
+        steps.append(l)
         if normalized[i] < l:
             break
 
         res += 1
 
-    return res
+    return BrokenStickRes(k=res, normalized=normalized, steps=steps)
 
 
 def transformation_matrix(eigens: List[np.ndarray], k: int) -> np.ndarray:
